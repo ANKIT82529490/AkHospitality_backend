@@ -12,14 +12,18 @@ const connectDB = async () => {
       return;
     }
 
-    const conn = await mongoose.connect(process.env.MONGODB_URI, {
+    const conn = await mongoose.connect(process.env.MONGODB_URI.trim().replace(/^"|"$/g, ''), {
       dbName: "your_db_name", // optional
+      connectTimeoutMS: 10000,
+      socketTimeoutMS: 45000,
+      family: 4
     });
 
     console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
 
   } catch (error) {
     console.error("❌ MongoDB Connection Error:", error.message);
+    console.error("💡 Check Atlas IP whitelist (0.0.0.0/0) and network access, and verify MONGODB_URI format.");
     process.exit(1); // stop server if DB fails
   }
 };
